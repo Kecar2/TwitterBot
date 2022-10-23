@@ -19,25 +19,26 @@ print('Authentication successful')
 
 api = tweepy.API(auth)
 
+
 ''' 
 Crear Tweet
 '''
-client.create_tweet(text='Prueba2')
+#client.create_tweet(text='Prueba2')
 
 '''
 Dar Like a tweet
 '''
-client.like(1583926410602758144)
+#client.like(1583926410602758144)
 
 '''
 Dar retweet
 '''
-client.retweet(1583926410602758144)
+#client.retweet(1583926410602758144)
 
 '''
 Responder un tweet
 '''
-client.create_tweet(in_reply_to_tweet_id=1583926410602758144, text='funciona?')
+#client.create_tweet(in_reply_to_tweet_id=1583926410602758144, text='funciona?')
 
 '''
 Obtener informacion de una cuenta
@@ -73,3 +74,34 @@ for term in search_terms:
 stream.filter(tweet_fields=['referenced_tweets'])
 
 '''
+################################################################################
+'''
+# Dar Likes a tweets
+
+class MyStream(tweepy.StreamingClient):
+    def on_tweet(self, tweet):
+        try:
+            print(tweet.text)
+            client.like(tweet.id)
+        except Exception as error:
+            print(error)
+
+        time.sleep(1)
+
+stream = MyStream(bearer_token=BEARER_TOKEN)
+
+stream.add_rules(tweepy.StreamRule('#Python OR #programming -is:retweet -is:reply'), dry_run=True)
+
+stream.filter()
+'''
+
+# Get Trend por Ubicacion
+
+lat = 41.38879
+lon = 2.15899
+trends = api.closest_trends(lat,lon)
+woeid = trends[0]['woeid']
+top_trends = api.get_place_trends(woeid)
+for item in top_trends[0]['trends']:
+    print('\n')
+    print(item)
